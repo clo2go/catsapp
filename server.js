@@ -1,36 +1,38 @@
+/*
+Here is where you set up your server file.
+express middleware.
+*/
+
 var express = require('express');
 var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
 
 var app = express();
+
 // window port environment
 var PORT = process.env.PORT || 3000;
-// JAWSdb server envrionment
-var connection;
 
-if (process.env.JAWSDB_URL) {
-    connection = mysql.createConnection(process.env.JAWSDB_URL);
-  } else {
-    connection = mysql.createConnection({
-  	host: 'localhost',
-  	user: 'root',
-  	password: 'utboot',
-  	database: ''
-  });
-};
-
-connection.connect(function(err) {
-	if(err) {
-		console.log('error connecting: ' + err.stack);
-		return;
-	};
-
-	console.log('connected as id ' + connection.threadId);
-});
+// Serve static content for the app from the "public" directory in the application directory.
+app.use(express.static(process.cwd() + '/public'));
 
 
+app.use(bodyParser.urlencoded({
+	extended: false
+}));
+// override with POST having ?_method=DELETE
+app.use(methodOverride('_method'));
+var exphbs = require('express-handlebars');
+app.engine('handlebars', exphbs({
+	defaultLayout: 'main'
+}));
+app.set('view engine', 'handlebars');
+
+// var routes = require('./controllers/cats_controller.js');
+// app.use('/', routes);
 
 // Starting our express server
 app.listen(PORT, function() {
-  console.log("App chopping through the " + PORT +);
+  console.log("App chopping through PORT " + PORT);
 });
+
+
